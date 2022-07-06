@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Container {
+  id              Int     @id @default(autoincrement())
+  client          String  @unique
+  containerNumber String  @unique
+  type            Int
+  status          Boolean
+  category        String
+
+  Container_Actions Container_Actions[]
+  @@map("container")
+}
+
+model Actions {
+  id          Int    @id @default(autoincrement())
+  description String @unique
+
+  Container_Actions Container_Actions[]
+  @@map("actions")
+}
+
+model Container_Actions {
+  id                 Int       @id @default(autoincrement())
+  action             Actions   @relation(fields: [description_action], references: [description])
+  description_action String
+  container          Container @relation(fields: [id_container], references: [id])
+  id_container       Int
+  startDate          DateTime  @default(now())
+  finishDate         DateTime  @default(now())
+
+
+  @@map("container_actions")
+}
